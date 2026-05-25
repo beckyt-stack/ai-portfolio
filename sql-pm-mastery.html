@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL PM Mastery</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+const makeSVG = (paths) => {
+  return function Icon({ className = "h-4 w-4" }) {
+    return React.createElement('svg', {
+      xmlns: "http://www.w3.org/2000/svg",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      strokeWidth: "2",
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      className
+    }, ...paths.map((d, i) => React.createElement('path', { key: i, d })));
+  };
+};
+window.LucideDatabase = makeSVG(["M12 2C6.48 2 2 4.24 2 7v10c0 2.76 4.48 5 10 5s10-2.24 10-5V7c0-2.76-4.48-5-10-5z","M2 7c0 2.76 4.48 5 10 5s10-2.24 10-5","M2 12c0 2.76 4.48 5 10 5s10-2.24 10-5"]);
+window.LucidePlay = makeSVG(["M5 3l14 9-14 9V3z"]);
+window.LucideBookOpen = makeSVG(["M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z","M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"]);
+window.LucideAward = makeSVG(["M12 15l-2 5 2-1 2 1-2-5","M8.93 12.93A5 5 0 1 0 15.07 6.93"]);
+window.LucideLayers = makeSVG(["M12 2L2 7l10 5 10-5-10-5z","M2 17l10 5 10-5","M2 12l10 5 10-5"]);
+window.LucideRefreshCw = makeSVG(["M23 4v6h-6","M1 20v-6h6","M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"]);
+window.LucideCheckCircle = makeSVG(["M22 11.08V12a10 10 0 1 1-5.93-9.14","M22 4L12 14.01l-3-3"]);
+window.LucideXCircle = makeSVG(["M15 9l-6 6","M9 9l6 6","M22 12A10 10 0 1 1 2 12a10 10 0 0 1 20 0z"]);
+window.LucideInfo = makeSVG(["M12 22A10 10 0 1 0 12 2a10 10 0 0 0 0 20z","M12 8h.01","M12 12v4"]);
+window.LucideSparkles = makeSVG(["M12 3l1.09 3.36L16.5 7l-3.41 0.64L12 11l-1.09-3.36L7.5 7l3.41-0.64L12 3z","M5 14l0.55 1.68L7.25 16l-1.7 0.32L5 18l-0.55-1.68L2.75 16l1.7-0.32L5 14z","M19 14l0.55 1.68L21.25 16l-1.7 0.32L19 18l-0.55-1.68L16.75 16l1.7-0.32L19 14z"]);
+window.LucideTrendingUp = makeSVG(["M23 6l-9.5 9.5-5-5L1 18","M17 6h6v6"]);
+window.LucideUsers = makeSVG(["M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2","M23 21v-2a4 4 0 0 0-3-3.87","M16 3.13a4 4 0 0 1 0 7.75"]);
+window.LucideCreditCard = makeSVG(["M1 4h22v16H1z","M1 9h22"]);
+window.LucideHelpCircle = makeSVG(["M12 22A10 10 0 1 0 12 2a10 10 0 0 0 0 20z","M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3","M12 17h.01"]);
+window.LucideClock = makeSVG(["M12 22A10 10 0 1 0 12 2a10 10 0 0 0 0 20z","M12 6v6l4 2"]);
+window.LucideBook = makeSVG(["M4 19.5A2.5 2.5 0 0 1 6.5 17H20","M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"]);
+window.LucideFileText = makeSVG(["M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z","M14 2v6h6","M16 13H8","M16 17H8","M10 9H8"]);
+window.LucideChevronRight = makeSVG(["M9 18l6-6-6-6"]);
+window.LucideChevronLeft = makeSVG(["M15 18l-6-6 6-6"]);
+</script>
+<style>
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.animate-fadeIn { animation: fadeIn 0.3s ease forwards; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+.animate-pulse { animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+// ==========================================
+// MOCK DATABASE SCHEMAS & DATA
+// ==========================================
+const MOCK_DATABASE = {
+  users: [
+    { id: 1, name: 'John Doe', country: 'USA', registered_at: '2026-01-15', tier: 'Premium' },
+    { id: 2, name: 'Alice Smith', country: 'Canada', registered_at: '2026-02-10', tier: 'Free' },
+    { id: 3, name: 'Bob Johnson', country: 'USA', registered_at: '2026-03-01', tier: 'Premium' },
+    { id: 4, name: 'Diana Prince', country: 'UK', registered_at: '2026-03-12', tier: 'Free' },
+    { id: 5, name: 'Carlos Santana', country: 'Mexico', registered_at: '2026-03-24', tier: 'Premium' },
+    { id: 6, name: 'Yuki Tanaka', country: 'Japan', registered_at: '2026-03-24', tier: 'Premium' },
+  ],
+  events: [
+    { id: 10, user_id: 1, event_name: 'login', event_date: '2026-03-24', platform: 'iOS' },
+    { id: 11, user_id: 1, event_name: 'click_feature_a', event_date: '2026-03-24', platform: 'iOS' },
+    { id: 12, user_id: 2, event_name: 'login', event_date: '2026-03-23', platform: 'Android' },
+    { id: 13, user_id: 3, event_name: 'login', event_date: '2026-03-24', platform: 'Web' },
+    { id: 14, user_id: 3, event_name: 'click_feature_b', event_date: '2026-03-24', platform: 'Web' },
+    { id: 15, user_id: 5, event_name: 'login', event_date: '2026-03-24', platform: 'Android' },
+    { id: 16, user_id: 5, event_name: 'click_feature_a', event_date: '2026-03-25', platform: 'Android' },
+    { id: 17, user_id: 6, event_name: 'login', event_date: '2026-03-24', platform: 'Web' },
+  ],
+  subscriptions: [
+    { id: 101, user_id: 1, monthly_fee: 15, status: 'active' },
+    { id: 102, user_id: 3, monthly_fee: 25, status: 'active' },
+    { id: 103, user_id: 5, monthly_fee: 15, status: 'active' },
+    { id: 104, user_id: 6, monthly_fee: 25, status: 'cancelled' },
+  ],
+  feature_usage: [
+    { id: 1, user_id: 1, feature_name: 'Dashboard', usage_count: 52 },
+    { id: 2, user_id: 1, feature_name: 'Analytics', usage_count: 12 },
+    { id: 3, user_id: 2, feature_name: 'Dashboard', usage_count: 4 },
+    { id: 4, user_id: 3, feature_name: 'Analytics', usage_count: 89 },
+    { id: 5, user_id: 4, feature_name: 'Dashboard', usage_count: 2 },
+    { id: 6, user_id: 5, feature_name: 'Analytics', usage_count: 45 },
+    { id: 7, user_id: 6, feature_name: 'Dashboard', usage_count: 73 },
+  ]
+};
+
+// Helper for case-insensitive column key mapping
+function getRowValueInsensitive(row, colName) {
+  if (!row) return undefined;
+  const colLower = colName.toLowerCase().trim();
+  for (const key of Object.keys(row)) {
+    if (key.toLowerCase() === colLower) {
+      return row[key];
+    }
+  }
+  return undefined;
+}
+
+// ==========================================
+// CLIENT-SIDE MOCK SQL ENGINE & PARSER
+// ==========================================
+function executeSQLQuery(queryStr) {
+  try {
+    let cleanQuery = queryStr.trim().replace(/\s+/g, ' ');
+    if (cleanQuery.endsWith(';')) {
+      cleanQuery = cleanQuery.slice(0, -1);
+    }
+
+    // Clean parentheses from ON clause if present
+    cleanQuery = cleanQuery.replace(/ON\s*\(\s*([\w\.]+)\s*=\s*([\w\.]+)\s*\)/i, 'ON $1 = $2');
+
+    const selectRegex = /^SELECT\s+(.*?)\s+FROM\s+(\w+)(?:\s+(LEFT\s+JOIN|INNER\s+JOIN|JOIN)\s+(\w+)\s+ON\s+([\w\.]+)\s*=\s*([\w\.]+))?(?:\s+WHERE\s+(.*?))?(?:\s+GROUP\s+BY\s+(.*?))?(?:\s+ORDER\s+BY\s+(.*?))?(?:\s+LIMIT\s+(\d+))?$/i;
+    
+    const match = cleanQuery.match(selectRegex);
+    if (!match) {
+      if (!/^SELECT/i.test(cleanQuery)) {
+        return { success: false, error: "Queries must start with 'SELECT'." };
+      }
+      if (!/\s+FROM\s+/i.test(cleanQuery)) {
+        return { success: false, error: "Missing 'FROM' clause." };
+      }
+      return { 
+        success: false, 
+        error: "Query syntax currently not fully supported by local PM engine. Use standard keywords: SELECT, FROM, JOIN, ON, WHERE, GROUP BY, ORDER BY, LIMIT." 
+      };
+    }
+
+    const selectClause = match[1];
+    const fromTable = match[2].toLowerCase();
+    const joinType = match[3];
+    const joinTable = match[4];
+    const joinKey1 = match[5];
+    const joinKey2 = match[6];
+    const whereClause = match[7];
+    const groupByClause = match[8];
+    const orderByClause = match[9];
+    const limitClause = match[10];
+
+    if (!MOCK_DATABASE[fromTable]) {
+      return { success: false, error: `Table '${fromTable}' does not exist in the PM database.` };
+    }
+
+    let rows = MOCK_DATABASE[fromTable].map(r => ({ ...r, _table: fromTable }));
+
+    if (joinType && joinTable) {
+      const lowerJoinTable = joinTable.toLowerCase();
+      if (!MOCK_DATABASE[lowerJoinTable]) {
+        return { success: false, error: `Table '${joinTable}' in JOIN clause does not exist.` };
+      }
+      
+      const table2Rows = MOCK_DATABASE[lowerJoinTable];
+      const joinedRows = [];
+
+      rows.forEach(r1 => {
+        let matched = false;
+        table2Rows.forEach(r2 => {
+          // Helper to get join key value without being sensitive to prefixes or case
+          const getJoinKeyValue = (keyPart) => {
+            const parts = keyPart.split('.');
+            if (parts.length === 2) {
+              const tbl = parts[0].toLowerCase();
+              const col = parts[1];
+              if (tbl === fromTable) {
+                return getRowValueInsensitive(r1, col);
+              } else {
+                return getRowValueInsensitive(r2, col);
+              }
+            } else {
+              const col = parts[0];
+              const val1 = getRowValueInsensitive(r1, col);
+              const val2 = getRowValueInsensitive(r2, col);
+              return val1 !== undefined ? val1 : val2;
+            }
+          };
+
+          const v1 = getJoinKeyValue(joinKey1);
+          const v2 = getJoinKeyValue(joinKey2);
+
+          if (v1 !== undefined && v2 !== undefined && String(v1) === String(v2)) {
+            joinedRows.push({ ...r1, ...r2, id: r1.id });
+            matched = true;
+          }
+        });
+
+        if (!matched && joinType.toUpperCase().includes('LEFT')) {
+          const nullRow = {};
+          Object.keys(table2Rows[0]).forEach(k => {
+            nullRow[k] = null;
+          });
+          joinedRows.push({ ...r1, ...nullRow });
+        }
+      });
+      rows = joinedRows;
+    }
+
+    if (whereClause) {
+      rows = rows.filter(row => {
+        const parts = whereClause.split(/\s*(=|>|<|>=|<=|!=|LIKE|IN)\s*/i);
+        if (parts.length >= 3) {
+          const colRaw = parts[0].trim().replace(/^\w+\./, '');
+          const op = parts[1].toUpperCase().trim();
+          let val = parts[2].trim().replace(/['"]/g, '');
+
+          const rowValue = getRowValueInsensitive(row, colRaw);
+          if (rowValue === undefined || rowValue === null) return false;
+
+          if (op === '=') return String(rowValue).toLowerCase() === val.toLowerCase();
+          if (op === '!=') return String(rowValue).toLowerCase() !== val.toLowerCase();
+          if (op === '>') return Number(rowValue) > Number(val);
+          if (op === '<') return Number(rowValue) < Number(val);
+          if (op === '>=') return Number(rowValue) >= Number(val);
+          if (op === '<=') return Number(rowValue) <= Number(val);
+          if (op === 'LIKE') {
+            const regexStr = val.replace(/%/g, '.*');
+            return new RegExp(`^${regexStr}$`, 'i').test(rowValue);
+          }
+          if (op === 'IN') {
+            const list = val.replace(/[\(\)]/g, '').split(',').map(s => s.trim().replace(/['"]/g, ''));
+            return list.includes(String(rowValue));
+          }
+        }
+        return true;
+      });
+    }
+
+    let resultRows = [];
+    if (groupByClause) {
+      const groupCol = groupByClause.trim().replace(/^\w+\./, '');
+      const groups = {};
+
+      rows.forEach(row => {
+        const val = getRowValueInsensitive(row, groupCol);
+        const gKey = val !== undefined ? String(val) : 'NULL';
+        if (!groups[gKey]) groups[gKey] = [];
+        groups[gKey].push(row);
+      });
+
+      const selectFields = selectClause.split(',').map(s => s.trim());
+      
+      Object.keys(groups).forEach(keyVal => {
+        const groupRows = groups[keyVal];
+        const newRow = {};
+        
+        selectFields.forEach(field => {
+          const fieldLower = field.toLowerCase();
+          
+          if (fieldLower.includes('count(')) {
+            if (fieldLower.includes('count(distinct')) {
+              const aggCol = field.match(/distinct\s+([\w\.]+)/i)?.[1]?.replace(/^\w+\./, '');
+              if (aggCol) {
+                const uniqueVals = new Set(groupRows.map(r => getRowValueInsensitive(r, aggCol)).filter(v => v !== null && v !== undefined));
+                newRow[field] = uniqueVals.size;
+              } else {
+                newRow[field] = groupRows.length;
+              }
+            } else {
+              newRow[field] = groupRows.length;
+            }
+          } else if (fieldLower.includes('sum(')) {
+            const aggCol = field.match(/\((.*?)\)/)[1].trim().replace(/^\w+\./, '');
+            const total = groupRows.reduce((sum, r) => sum + (Number(getRowValueInsensitive(r, aggCol)) || 0), 0);
+            newRow[field] = total;
+          } else if (fieldLower.includes('avg(')) {
+            const aggCol = field.match(/\((.*?)\)/)[1].trim().replace(/^\w+\./, '');
+            const total = groupRows.reduce((sum, r) => sum + (Number(getRowValueInsensitive(r, aggCol)) || 0), 0);
+            newRow[field] = groupRows.length ? Number((total / groupRows.length).toFixed(2)) : 0;
+          } else {
+            const plainCol = field.replace(/^\w+\./, '');
+            const val = getRowValueInsensitive(groupRows[0], plainCol);
+            newRow[field] = val !== undefined ? val : null;
+          }
+        });
+        resultRows.push(newRow);
+      });
+    } else {
+      const selectFields = selectClause.split(',').map(s => s.trim());
+      const hasAggregates = selectFields.some(f => f.toLowerCase().includes('count(') || f.toLowerCase().includes('sum(') || f.toLowerCase().includes('avg('));
+
+      if (hasAggregates) {
+        const newRow = {};
+        selectFields.forEach(field => {
+          const fieldLower = field.toLowerCase();
+          if (fieldLower.includes('count(')) {
+            if (fieldLower.includes('count(distinct')) {
+              const aggCol = field.match(/distinct\s+([\w\.]+)/i)?.[1]?.replace(/^\w+\./, '');
+              if (aggCol) {
+                const uniqueVals = new Set(rows.map(r => getRowValueInsensitive(r, aggCol)).filter(v => v !== null && v !== undefined));
+                newRow[field] = uniqueVals.size;
+              } else {
+                newRow[field] = rows.length;
+              }
+            } else {
+              newRow[field] = rows.length;
+            }
+          } else if (fieldLower.includes('sum(')) {
+            const aggCol = field.match(/\((.*?)\)/)[1].trim().replace(/^\w+\./, '');
+            const total = rows.reduce((sum, r) => sum + (Number(getRowValueInsensitive(r, aggCol)) || 0), 0);
+            newRow[field] = total;
+          } else if (fieldLower.includes('avg(')) {
+            const aggCol = field.match(/\((.*?)\)/)[1].trim().replace(/^\w+\./, '');
+            const total = rows.reduce((sum, r) => sum + (Number(getRowValueInsensitive(r, aggCol)) || 0), 0);
+            newRow[field] = rows.length ? Number((total / rows.length).toFixed(2)) : 0;
+          } else {
+            newRow[field] = 'Aggregated context only';
+          }
+        });
+        resultRows.push(newRow);
+      } else {
+        rows.forEach(row => {
+          const newRow = {};
+          selectFields.forEach(field => {
+            if (field === '*') {
+              Object.assign(newRow, row);
+              delete newRow._table;
+            } else {
+              const plainCol = field.replace(/^\w+\./, '');
+              const val = getRowValueInsensitive(row, plainCol);
+              newRow[field] = val !== undefined ? val : null;
+            }
+          });
+          resultRows.push(newRow);
+        });
+      }
+    }
+
+    if (orderByClause) {
+      const parts = orderByClause.trim().split(/\s+/);
+      const sortCol = parts[0].replace(/^\w+\./, '');
+      const isDesc = parts[1] && parts[1].toUpperCase() === 'DESC';
+      
+      resultRows.sort((a, b) => {
+        let vA = getRowValueInsensitive(a, sortCol);
+        let vB = getRowValueInsensitive(b, sortCol);
+        if (vA === undefined || vA === null) return isDesc ? -1 : 1;
+        if (vB === undefined || vB === null) return isDesc ? 1 : -1;
+        if (typeof vA === 'string') {
+          return isDesc ? String(vB).localeCompare(String(vA)) : String(vA).localeCompare(String(vB));
+        } else {
+          return isDesc ? (Number(vB) - Number(vA)) : (Number(vA) - Number(vB));
+        }
+      });
+    }
+
+    if (limitClause) {
+      const num = parseInt(limitClause, 10);
+      resultRows = resultRows.slice(0, num);
+    }
+
+    return { success: true, columns: Object.keys(resultRows[0] || {}), rows: resultRows };
+  } catch (err) {
+    return { success: false, error: `Syntax error: ${err.message}` };
+  }
+}
+
+// ==========================================
+// LESSONS & PM PRACTICE CHALLENGES
+// ==========================================
+const LESSONS = [
+  {
+    id: 1,
+    title: "SQL Foundations for PMs",
+    concept: "Every query starts with SELECT (what you want) and FROM (where it is). For Product Managers, seeing specific attributes like country or tier is the first step of user profiling.",
+    formulaTitle: "Base SQL Template",
+    sqlExample: "SELECT name, country FROM users LIMIT 3;",
+    challengeText: "Write a query to fetch the name and tier columns for all users in the 'users' table.",
+    expectedQuery: "SELECT name, tier FROM users",
+    defaultQuery: "SELECT * FROM users"
+  },
+  {
+    id: 2,
+    title: "Understanding User Engagement (DAU)",
+    concept: "We track Daily Active Users (DAU) by counting the number of unique active user IDs on a specific day. We use COUNT(DISTINCT user_id) so we don't double-count users with multiple events.",
+    formulaTitle: "DAU SQL Template",
+    sqlExample: "SELECT COUNT(DISTINCT user_id) FROM events WHERE event_date = '2026-03-24';",
+    challengeText: "Find the total unique user logins by filtering events where event_name is 'login'.",
+    expectedQuery: "SELECT COUNT(DISTINCT user_id) FROM events WHERE event_name = 'login'",
+    defaultQuery: "SELECT * FROM events"
+  },
+  {
+    id: 3,
+    title: "Feature Adoption Rates",
+    concept: "Grouping usage numbers lets us instantly see which parts of our software have high adoption. Combine GROUP BY with COUNT() to build feature breakdown lists.",
+    formulaTitle: "Feature Popularity Template",
+    sqlExample: "SELECT feature_name, SUM(usage_count) FROM feature_usage GROUP BY feature_name;",
+    challengeText: "Group the feature_usage table by feature_name to see the count of feature interactions.",
+    expectedQuery: "SELECT feature_name, COUNT(usage_count) FROM feature_usage GROUP BY feature_name",
+    defaultQuery: "SELECT * FROM feature_usage"
+  },
+  {
+    id: 4,
+    title: "ARR & Revenue Metrics",
+    concept: "Annual Recurring Revenue (ARR) is calculated by multiplying monthly recurring fees of active subscriptions by 12. PMs use SUM() to find these aggregated values.",
+    formulaTitle: "ARR SQL Template",
+    sqlExample: "SELECT SUM(monthly_fee * 12) FROM subscriptions WHERE status = 'active';",
+    challengeText: "Calculate the total Monthly Recurring Revenue (MRR) by sum of monthly_fee from active subscriptions.",
+    expectedQuery: "SELECT SUM(monthly_fee) FROM subscriptions WHERE status = 'active'",
+    defaultQuery: "SELECT * FROM subscriptions"
+  },
+  {
+    id: 5,
+    title: "Cross-referencing Tables (JOINs)",
+    concept: "User data sits in different databases. To know the names of subscribers, join 'users' and 'subscriptions' on user_id.",
+    formulaTitle: "Relational INNER JOIN Template",
+    sqlExample: "SELECT users.name, subscriptions.monthly_fee FROM users JOIN subscriptions ON users.id = subscriptions.user_id;",
+    challengeText: "Join 'users' table and 'subscriptions' table on id and user_id to display the subscriber name and their status.",
+    expectedQuery: "SELECT name, status FROM users JOIN subscriptions ON users.id = subscriptions.user_id",
+    defaultQuery: "SELECT name FROM users"
+  }
+];
+
+// ==========================================
+// MEMORY FLASHCARDS (PM CONCEPTS & ALIGNMENT)
+// ==========================================
+const INITIAL_FLASHCARDS = [
+  {
+    id: 1,
+    question: "What is the physical Execution Order of standard SQL keywords?",
+    hints: [
+      "Databases start by finding and joining tables first (FROM/JOIN).",
+      "Next, row filtering and grouped math take place (WHERE, GROUP BY, HAVING).",
+      "Finally, fields are displayed, cleaned, ordered, and sliced (SELECT, DISTINCT, ORDER BY, LIMIT)."
+    ],
+    answer: "FROM ➔ JOIN ➔ WHERE ➔ GROUP BY ➔ HAVING ➔ SELECT ➔ DISTINCT ➔ ORDER BY ➔ LIMIT. This explains why you cannot filter on a SELECT-created column alias inside a WHERE clause!",
+    difficulty: null,
+  },
+  {
+    id: 2,
+    question: "Why should PMs prefer COUNT(DISTINCT user_id) instead of COUNT(user_id) for tracking engagement?",
+    hints: [
+      "Think about duplicate event logging if a power user clicks the dashboard 50 times.",
+      "COUNT(user_id) logs raw hits/interactions.",
+      "DISTINCT aggregates unique human IDs."
+    ],
+    answer: "COUNT(user_id) counts every transaction or session log row. COUNT(DISTINCT user_id) extracts unique user identities exactly once, yielding accurate Daily Active Users (DAU) or Active Customers.",
+    difficulty: null,
+  },
+  {
+    id: 3,
+    question: "What's the difference between WHERE and HAVING?",
+    answer: "WHERE filters rows before grouping occurs. HAVING filters aggregated data groups after GROUP BY.",
+    hints: [
+      "One works during initial table scan filtering.",
+      "The other checks calculations of your metrics (e.g. SUM or COUNT).",
+      "You cannot place functions like COUNT(*) inside a WHERE clause."
+    ],
+    difficulty: null,
+  },
+  {
+    id: 4,
+    question: "What is a LEFT JOIN and when would you use it?",
+    hints: [
+      "It preserves the integrity of the left side primary list.",
+      "Unmatched columns are mapped to empty placeholder states.",
+      "Ideal for isolating missing features or inactive users."
+    ],
+    answer: "A LEFT JOIN preserves every row from the primary left table. Unmatched records on the right populate as NULL. It is crucial for locating missing user parameters (e.g. finding users who have not subscribed, where subscription.id IS NULL).",
+    difficulty: null,
+  },
+  {
+    id: 5,
+    question: "How is Annual Recurring Revenue (ARR) formatted in standard SQL tables?",
+    hints: [
+      "The metric operates on current monthly subscription fees.",
+      "Scale the aggregate to represent a full 12-month sequence.",
+      "Only aggregate parameters where the user is an active payer."
+    ],
+    answer: "SELECT SUM(monthly_fee * 12) FROM subscriptions WHERE status = 'active'; This queries active subscriptions, scales the monthly billing rate to an annualized run rate, and aggregates it.",
+    difficulty: null,
+  }
+];
+
+function App() {
+  // Navigation State
+  const [activeTab, setActiveTab] = useState('dashboard');
+  
+  // SQL Playground State
+  const [currentQuery, setCurrentQuery] = useState("SELECT name, country, tier FROM users WHERE tier = 'Premium';");
+  const [queryResult, setQueryResult] = useState(null);
+  const [activePlaygroundTable, setActivePlaygroundTable] = useState('users');
+
+  // Challenge Practice State
+  const [currentLessonIdx, setCurrentLessonIdx] = useState(0);
+  const [challengeQuery, setChallengeQuery] = useState(LESSONS[0].defaultQuery);
+  const [challengeFeedback, setChallengeFeedback] = useState(null);
+
+  // Hidden Recipe State
+  const [showBlueprint, setShowBlueprint] = useState(false);
+
+  // Flashcards State
+  const [flashcards, setFlashcards] = useState(INITIAL_FLASHCARDS);
+  const [currentCardIdx, setCurrentCardIdx] = useState(0);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [hintStep, setHintStep] = useState(0);
+
+  // General App Statistics & spaced repetition
+  const [userScore, setUserScore] = useState(25);
+  const [completedLessons, setCompletedLessons] = useState([false, false, false, false, false]);
+
+  // Sync execution of playground results directly on query changes
+  useEffect(() => {
+    handleExecutePlaygroundQuery(challengeQuery);
+  }, [challengeQuery, currentLessonIdx]);
+
+  // Reset hints and showAnswer state on card transitions
+  useEffect(() => {
+    setHintStep(0);
+    setShowAnswer(false);
+  }, [currentCardIdx]);
+
+  // Reset recipe visibility when switching lessons
+  useEffect(() => {
+    setShowBlueprint(false);
+  }, [currentLessonIdx]);
+
+  const handleExecutePlaygroundQuery = (qStr) => {
+    const res = executeSQLQuery(qStr);
+    setQueryResult(res);
+  };
+
+  const handleTestChallenge = () => {
+    const lesson = LESSONS[currentLessonIdx];
+    const userClean = challengeQuery.replace(/\s+/g, '').replace(/;/g, '').toLowerCase();
+    const expectedClean = lesson.expectedQuery.replace(/\s+/g, '').toLowerCase();
+
+    const userExec = executeSQLQuery(challengeQuery);
+    const expectedExec = executeSQLQuery(lesson.expectedQuery);
+
+    if (userExec.success && expectedExec.success) {
+      const match = JSON.stringify(userExec.rows) === JSON.stringify(expectedExec.rows);
+      if (match || userClean === expectedClean) {
+        setChallengeFeedback({
+          success: true,
+          message: "Outstanding! Your query output matches the expected PM metric results perfectly."
+        });
+        const updated = [...completedLessons];
+        updated[currentLessonIdx] = true;
+        setCompletedLessons(updated);
+        setUserScore(prev => Math.min(prev + 15, 100));
+      } else {
+        setChallengeFeedback({
+          success: false,
+          message: `Query ran, but output doesn't match the goal. Try modifying filters or columns. Expected columns: ${expectedExec.columns.join(', ')}`
+        });
+      }
+    } else {
+      setChallengeFeedback({
+        success: false,
+        message: userExec.error || "Execution error. Please check your SQL syntax syntax."
+      });
+    }
+  };
+
+  const handleRateFlashcard = (diff) => {
+    const updated = [...flashcards];
+    updated[currentCardIdx].difficulty = diff;
+    setFlashcards(updated);
+    
+    setUserScore(prev => Math.min(prev + 4, 100));
+
+    setTimeout(() => {
+      setHintStep(0);
+      setShowAnswer(false);
+      setCurrentCardIdx((prev) => (prev + 1) % flashcards.length);
+    }, 400);
+  };
+
+  const getSQLLevel = (score) => {
+    if (score < 40) return { title: "Novice PM", color: "text-slate-500 bg-slate-100 border-slate-300" };
+    if (score < 65) return { title: "Intermediate Analyst PM", color: "text-indigo-600 bg-indigo-50 border-indigo-200" };
+    if (score < 85) return { title: "Advanced Technical PM", color: "text-cyan-600 bg-cyan-50 border-cyan-200" };
+    return { title: "Data-Driven SQL Leader", color: "text-emerald-600 bg-emerald-50 border-emerald-300" };
+  };
+
+  const levelInfo = getSQLLevel(userScore);
+
+  const currentCard = flashcards[currentCardIdx];
+  const totalHints = currentCard.hints ? currentCard.hints.length : 0;
+  const allHintsUsed = hintStep >= totalHints;
+
+  return (
+    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
+      {/* HEADER NAVBAR */}
+      <header className="border-b border-slate-800 bg-slate-950 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+        <div className="flex items-center space-x-3">
+          <div className="bg-gradient-to-tr from-indigo-600 to-cyan-500 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-500/20">
+            <window.LucideDatabase className="h-6 w-6" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-indigo-200 via-slate-100 to-cyan-300 bg-clip-text text-transparent">
+              SQL PM Mastery
+            </h1>
+            <p className="text-xs text-slate-400">Continuous Spaced-Repetition & Learning Platform</p>
+          </div>
+        </div>
+
+        {/* PROFILE/PROGRESS GAUGE */}
+        <div className="flex items-center space-x-4">
+          <div className="text-right hidden sm:block">
+            <p className="text-xs text-slate-400">Active PM Tier</p>
+            <span className={`text-xs font-semibold px-2 py-0.5 rounded-md border ${levelInfo.color}`}>
+              {levelInfo.title}
+            </span>
+          </div>
+          <div className="relative flex items-center justify-center w-12 h-12 rounded-full bg-slate-800 border-2 border-slate-700">
+            <span className="text-xs font-bold text-cyan-400">{userScore}%</span>
+            <svg className="absolute w-full h-full transform -rotate-90">
+              <circle
+                cx="22"
+                cy="22"
+                r="20"
+                stroke="transparent"
+                className="text-slate-800"
+                strokeWidth="2"
+                fill="transparent"
+              />
+              <circle
+                cx="24"
+                cy="24"
+                r="20"
+                stroke="currentColor"
+                className="text-indigo-500 transition-all duration-500"
+                strokeWidth="2.5"
+                strokeDasharray={2 * Math.PI * 20}
+                strokeDashoffset={2 * Math.PI * 20 * (1 - userScore / 100)}
+                fill="transparent"
+              />
+            </svg>
+          </div>
+        </div>
+      </header>
+
+      {/* SUB-NAVBAR TABS */}
+      <div className="bg-slate-950 border-b border-slate-800 sticky top-[73px] z-40 px-4 sm:px-6 py-2 overflow-x-auto flex space-x-1 sm:space-x-2">
+        <button 
+          onClick={() => setActiveTab('dashboard')}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all shrink-0 ${
+            activeTab === 'dashboard' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-900'
+          }`}
+        >
+          <window.LucideTrendingUp className="h-4 w-4" />
+          <span>Dashboard</span>
+        </button>
+        <button 
+          onClick={() => {
+            setActiveTab('playground');
+            setChallengeQuery(LESSONS[currentLessonIdx].defaultQuery);
+            setChallengeFeedback(null);
+          }}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all shrink-0 ${
+            activeTab === 'playground' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-900'
+          }`}
+        >
+          <window.LucidePlay className="h-4 w-4" />
+          <span>Playground & Lessons</span>
+        </button>
+        <button 
+          onClick={() => setActiveTab('visuals')}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all shrink-0 ${
+            activeTab === 'visuals' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-900'
+          }`}
+        >
+          <window.LucideLayers className="h-4 w-4" />
+          <span>Interactive Infographics</span>
+        </button>
+        <button 
+          onClick={() => setActiveTab('flashcards')}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all shrink-0 ${
+            activeTab === 'flashcards' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-900'
+          }`}
+        >
+          <window.LucideBookOpen className="h-4 w-4" />
+          <span>Memory Flashcards</span>
+          {flashcards.filter(c => c.difficulty === null).length > 0 && (
+            <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+          )}
+        </button>
+      </div>
+
+      <main className="flex-1 p-4 sm:p-6 max-w-7xl mx-auto w-full transition-all duration-300">
+        
+        {/* ==================== TAB 1: DASHBOARD ==================== */}
+        {activeTab === 'dashboard' && (
+          <div className="space-y-6">
+            {/* HERO BLOCK */}
+            <div className="bg-gradient-to-r from-slate-950 to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-2xl">
+              <div className="absolute right-0 top-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl -z-10"></div>
+              <div className="absolute left-1/3 bottom-0 w-60 h-60 bg-cyan-500/15 rounded-full blur-3xl -z-10"></div>
+              
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div className="space-y-3 max-w-2xl">
+                  <span className="text-xs uppercase tracking-wider font-extrabold text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full">
+                    Welcome to SQL PM Mastery
+                  </span>
+                  <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+                    Stop Waiting for the Data Team
+                  </h2>
+                  <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                    Uncover product insight metrics, run cohort retention analysis, measure features adoption, 
+                    and calculate churn rates directly. This continuous spaced-repetition trainer will check your memory of core SQL concepts.
+                  </p>
+                </div>
+                <div className="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl shrink-0 w-full md:w-auto">
+                  <div className="flex items-center space-x-3 mb-2">
+                    <window.LucideSparkles className="h-5 w-5 text-yellow-400" />
+                    <span className="text-xs text-slate-400 uppercase tracking-widest font-bold">Your Status Dashboard</span>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xl font-bold text-white">{levelInfo.title}</p>
+                    <p className="text-xs text-slate-400">Completion Score: {userScore}%</p>
+                  </div>
+                  <div className="mt-4 w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div className="bg-gradient-to-r from-indigo-500 to-cyan-400 h-full" style={{ width: `${userScore}%` }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* DYNAMIC PROGRESS GRID */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              
+              {/* COMPLETED LESSONS STATUS */}
+              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <window.LucideAward className="text-cyan-400 h-5 w-5" />
+                    <h3 className="font-bold text-white text-sm">PM Lessons Progress</h3>
+                  </div>
+                  <span className="text-xs text-slate-400 font-bold">
+                    {completedLessons.filter(Boolean).length} / {LESSONS.length} Done
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  {LESSONS.map((lesson, idx) => (
+                    <div key={lesson.id} className="flex items-center justify-between p-2 rounded-xl bg-slate-900 text-xs border border-slate-800">
+                      <span className="text-slate-300 font-medium">{lesson.title}</span>
+                      {completedLessons[idx] ? (
+                        <span className="text-emerald-400 flex items-center font-bold">
+                          <window.LucideCheckCircle className="h-3 w-3 mr-1" /> Complete
+                        </span>
+                      ) : (
+                        <span className="text-amber-400 font-semibold">Not Started</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* RETENTION REVISION LIST (SPACED REPETITION) */}
+              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <window.LucideClock className="text-indigo-400 h-5 w-5" />
+                    <h3 className="font-bold text-white text-sm">Memory Check Queue</h3>
+                  </div>
+                  <span className="text-xs text-rose-400 font-bold flex items-center">
+                    {flashcards.filter(c => c.difficulty === null).length} Unrated
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400">
+                  Cards rated "Hard" or not yet seen require active recall checks for memory consolidation.
+                </p>
+                <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                  {flashcards.map((card) => (
+                    <div key={card.id} className="p-2 rounded-xl bg-slate-900 border border-slate-800 flex justify-between items-center text-xs">
+                      <p className="text-slate-300 truncate max-w-[180px]">{card.question}</p>
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${
+                        card.difficulty === 'hard' ? 'bg-rose-500/15 text-rose-400' :
+                        card.difficulty === 'medium' ? 'bg-amber-500/15 text-amber-400' :
+                        card.difficulty === 'easy' ? 'bg-emerald-500/15 text-emerald-400' :
+                        'bg-slate-700/50 text-slate-400'
+                      }`}>
+                        {card.difficulty || "Pending"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* ACTION QUICK START */}
+              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <window.LucideSparkles className="text-yellow-400 h-5 w-5" />
+                    <h3 className="font-bold text-white text-sm">Quick Jump PM Query</h3>
+                  </div>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Test an active query inside our live PM environment. Inspect table metrics instantly:
+                  </p>
+                  <div className="bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-[11px] font-mono text-cyan-300 overflow-x-auto">
+                    SELECT country, COUNT(*) FROM users GROUP BY country;
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const q = "SELECT country, COUNT(*) FROM users GROUP BY country;";
+                    setChallengeQuery(q);
+                    handleExecutePlaygroundQuery(q);
+                    setActiveTab('playground');
+                  }}
+                  className="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2.5 px-4 rounded-xl transition shadow-lg shadow-indigo-600/15 flex items-center justify-center space-x-1"
+                >
+                  <window.LucidePlay className="h-3 w-3" />
+                  <span>Launch in Playground</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* ==================== TAB 2: PLAYGROUND & LESSONS ==================== */}
+        {activeTab === 'playground' && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            {/* LEFT COLUMN: LESSON NAV & METRIC INSTRUCTION */}
+            <div className="lg:col-span-5 space-y-6">
+              
+              {/* LESSON SELECTION & NAVIGATION */}
+              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-indigo-400 tracking-widest uppercase">
+                    Challenge {currentLessonIdx + 1} of {LESSONS.length}
+                  </span>
+                  <div className="flex space-x-1.5">
+                    <button 
+                      onClick={() => {
+                        const nextIdx = Math.max(0, currentLessonIdx - 1);
+                        setCurrentLessonIdx(nextIdx);
+                        setChallengeQuery(LESSONS[nextIdx].defaultQuery);
+                        setChallengeFeedback(null);
+                      }}
+                      disabled={currentLessonIdx === 0}
+                      className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:bg-slate-800 disabled:opacity-50 text-slate-400"
+                    >
+                      <window.LucideChevronLeft className="h-4 w-4" />
+                    </button>
+                    <button 
+                      onClick={() => {
+                        const nextIdx = Math.min(LESSONS.length - 1, currentLessonIdx + 1);
+                        setCurrentLessonIdx(nextIdx);
+                        setChallengeQuery(LESSONS[nextIdx].defaultQuery);
+                        setChallengeFeedback(null);
+                      }}
+                      disabled={currentLessonIdx === LESSONS.length - 1}
+                      className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:bg-slate-800 disabled:opacity-50 text-slate-400"
+                    >
+                      <window.LucideChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-lg font-bold text-white flex items-center space-x-2">
+                    <span className="bg-indigo-600/20 text-indigo-400 text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                      {LESSONS[currentLessonIdx].id}
+                    </span>
+                    <span>{LESSONS[currentLessonIdx].title}</span>
+                  </h3>
+                  <p className="text-xs text-slate-300 leading-relaxed bg-slate-900 p-3 rounded-xl border border-slate-800/80">
+                    {LESSONS[currentLessonIdx].concept}
+                  </p>
+                </div>
+
+                {/* VISUAL BLUEPRINT - COLLAPSIBLE ON-DEMAND */}
+                <div className="bg-slate-900/60 p-3.5 rounded-xl border border-dashed border-slate-800 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[10px] text-slate-400 uppercase font-extrabold tracking-widest flex items-center">
+                      <window.LucideInfo className="h-3 w-3 mr-1 text-cyan-400" />
+                      Recipe: {LESSONS[currentLessonIdx].formulaTitle}
+                    </p>
+                    <button
+                      onClick={() => setShowBlueprint(!showBlueprint)}
+                      className="text-[10px] text-indigo-400 hover:text-indigo-300 font-bold px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20"
+                    >
+                      {showBlueprint ? "Hide Recipe" : "Uncover Recipe"}
+                    </button>
+                  </div>
+                  
+                  {showBlueprint ? (
+                    <code className="text-[11px] font-mono text-cyan-300 block bg-slate-950 p-2 rounded-lg border border-slate-800 select-all animate-fadeIn">
+                      {LESSONS[currentLessonIdx].sqlExample}
+                    </code>
+                  ) : (
+                    <div className="text-center py-2 bg-slate-950/40 rounded-lg border border-slate-800/50 text-[10px] text-slate-500 italic">
+                      Recipe blueprint is hidden. Click "Uncover Recipe" to reveal.
+                    </div>
+                  )}
+                </div>
+
+                {/* CHALLENGE QUESTION */}
+                <div className="bg-indigo-600/10 p-4 rounded-xl border border-indigo-500/20 space-y-2.5">
+                  <p className="text-xs text-indigo-200 font-bold">
+                    🎯 Your Hands-on Challenge:
+                  </p>
+                  <p className="text-xs text-slate-300 font-medium">
+                    {LESSONS[currentLessonIdx].challengeText}
+                  </p>
+                </div>
+
+              </div>
+
+              {/* METADATA VIEW OF TABLES */}
+              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+                <div className="flex items-center space-x-2">
+                  <window.LucideDatabase className="h-5 w-5 text-indigo-400" />
+                  <h4 className="text-sm font-bold text-white">Interactive Tables Schema</h4>
+                </div>
+                
+                {/* Selector */}
+                <div className="flex flex-wrap gap-1.5">
+                  {Object.keys(MOCK_DATABASE).map(tbl => (
+                    <button 
+                      key={tbl}
+                      onClick={() => setActivePlaygroundTable(tbl)}
+                      className={`text-xs px-3 py-1.5 rounded-lg border transition font-bold ${
+                        activePlaygroundTable === tbl 
+                        ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/10' 
+                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      📋 {tbl}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Database Mini Table Grid Viewer */}
+                <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-x-auto max-h-48">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-slate-800 bg-slate-950 text-[10px] text-slate-400 uppercase tracking-widest font-extrabold">
+                        {Object.keys(MOCK_DATABASE[activePlaygroundTable][0] || {}).map(col => (
+                          <th key={col} className="p-2 border-r border-slate-800">{col}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/60 text-xs font-mono">
+                      {MOCK_DATABASE[activePlaygroundTable].map((row, rIdx) => (
+                        <tr key={rIdx} className="hover:bg-slate-800/40 text-slate-300">
+                          {Object.values(row).map((val, cIdx) => (
+                            <td key={cIdx} className="p-2 border-r border-slate-800/60">
+                              {val === null ? <span className="text-slate-600 italic">null</span> : String(val)}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* RIGHT COLUMN: CODE EDITOR & QUERY OUTPUT */}
+            <div className="lg:col-span-7 space-y-6">
+              
+              {/* CODE EDITOR */}
+              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <window.LucideFileText className="text-indigo-400 h-4 w-4" />
+                    <h3 className="font-bold text-white text-sm">Interactive SQL Console</h3>
+                  </div>
+                  <span className="text-[10px] text-indigo-400 font-extrabold uppercase bg-indigo-500/10 px-2 py-0.5 rounded">
+                    DuckDB / Standard Compliant Engine
+                  </span>
+                </div>
+
+                <div className="relative">
+                  <textarea 
+                    value={challengeQuery}
+                    onChange={(e) => setChallengeQuery(e.target.value)}
+                    rows={4}
+                    placeholder="SELECT * FROM users..."
+                    className="w-full bg-slate-900 text-cyan-300 border border-slate-800 rounded-xl p-4 font-mono text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none placeholder-slate-700 shadow-inner"
+                  />
+                  <div className="absolute right-3 bottom-4 flex space-x-2">
+                    <button
+                      onClick={() => handleExecutePlaygroundQuery(challengeQuery)}
+                      className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold py-1.5 px-3 rounded-lg transition flex items-center space-x-1 border border-slate-700"
+                    >
+                      <window.LucideDatabase className="h-3 w-3 text-cyan-400" />
+                      <span>Dry Run</span>
+                    </button>
+                    <button
+                      onClick={handleTestChallenge}
+                      className="bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold py-1.5 px-4 rounded-lg transition shadow-md shadow-indigo-600/15 flex items-center space-x-1"
+                    >
+                      <window.LucidePlay className="h-3 w-3" />
+                      <span>Test & Complete</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* FEEDBACK STATUS */}
+                {challengeFeedback && (
+                  <div className={`p-4 rounded-xl border flex items-start space-x-3 text-xs ${
+                    challengeFeedback.success 
+                    ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-200' 
+                    : 'bg-rose-500/10 border-rose-500/20 text-rose-200'
+                  }`}>
+                    {challengeFeedback.success ? (
+                      <window.LucideCheckCircle className="h-5 w-5 text-emerald-400 shrink-0" />
+                    ) : (
+                      <window.LucideXCircle className="h-5 w-5 text-rose-400 shrink-0" />
+                    )}
+                    <div>
+                      <p className="font-bold">{challengeFeedback.success ? "Success!" : "Syntax / Metric Gap"}</p>
+                      <p className="mt-0.5 leading-relaxed text-slate-300">{challengeFeedback.message}</p>
+                    </div>
+                  </div>
+                )}
+
+              </div>
+
+              {/* LIVE QUERY RESULT OUTPUT */}
+              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-bold text-white">Live Query Output</h4>
+                  <span className="text-xs text-slate-400">
+                    {queryResult && queryResult.success ? `${queryResult.rows.length} rows returned` : ''}
+                  </span>
+                </div>
+
+                {queryResult ? (
+                  queryResult.success ? (
+                    queryResult.rows.length > 0 ? (
+                      <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-x-auto max-h-60">
+                        <table className="w-full text-left border-collapse">
+                          <thead>
+                            <tr className="border-b border-slate-800 bg-slate-950 text-[10px] text-slate-400 uppercase tracking-widest font-extrabold">
+                              {queryResult.columns.map(col => (
+                                <th key={col} className="p-2.5 border-r border-slate-800">{col}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-800/60 text-xs font-mono">
+                            {queryResult.rows.map((row, rIdx) => (
+                              <tr key={rIdx} className="hover:bg-slate-800/40 text-slate-300">
+                                {queryResult.columns.map((col, cIdx) => (
+                                  <td key={cIdx} className="p-2.5 border-r border-slate-800/60">
+                                    {row[col] === null ? (
+                                      <span className="text-slate-600 italic">null</span>
+                                    ) : (
+                                      String(row[col])
+                                    )}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="bg-slate-900/60 rounded-xl p-6 text-center text-slate-400 border border-dashed border-slate-800 text-xs">
+                        Query returned 0 rows. Confirm filters or column matches.
+                      </div>
+                    )
+                  ) : (
+                    <div className="bg-rose-500/10 border border-rose-500/20 text-rose-200 rounded-xl p-4 text-xs font-mono leading-relaxed">
+                      ❌ {queryResult.error}
+                    </div>
+                  )
+                ) : (
+                  <div className="bg-slate-900/60 rounded-xl p-6 text-center text-slate-400 border border-dashed border-slate-800 text-xs">
+                    Run query to inspect results.
+                  </div>
+                )}
+
+              </div>
+
+            </div>
+
+          </div>
+        )}
+
+        {/* ==================== TAB 3: DYNAMIC INFOGRAPHICS ==================== */}
+        {activeTab === 'visuals' && (
+          <div className="space-y-6">
+            
+            {/* ROW 1: SQL PIPELINE EXECUTION ENGINE */}
+            <div className="bg-slate-950 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+              <div>
+                <h3 className="text-lg font-bold text-white flex items-center">
+                  <window.LucideLayers className="h-5 w-5 text-indigo-400 mr-2" />
+                  Visual SQL Order of Execution
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  Did you know SQL databases process keywords in a different order than you write them? Click a stage to understand its impact.
+                </p>
+              </div>
+
+              {/* Execution Pipeline Steps */}
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                {[
+                  { step: "1. FROM", desc: "Database locates target tables.", pmNote: "Always pick the correct primary resource first." },
+                  { step: "2. JOIN", desc: "Connects separate lists of parameters.", pmNote: "Crucial for adding metrics (subscription stats)." },
+                  { step: "3. WHERE", desc: "Filters individual rows early.", pmNote: "E.g. filtering out inactive logs before counting." },
+                  { step: "4. GROUP BY", desc: "Groups identical data for metrics.", pmNote: "Separating users by Country or Tier." },
+                  { step: "5. HAVING", desc: "Filters aggregated calculations.", pmNote: "E.g. only showing categories with > 50 downloads." },
+                  { step: "6. SELECT", desc: "Chooses columns & aliases.", pmNote: "Creates final columns to view." },
+                  { step: "7. DISTINCT", desc: "Strips duplicate outputs.", pmNote: "Required for exact DAU user numbers." },
+                  { step: "8. ORDER BY", desc: "Orders the visual rows.", pmNote: "Ranking features from highest to lowest usage." },
+                  { step: "9. LIMIT", desc: "Slices final query length.", pmNote: "Saves memory on large databases." },
+                ].map((item, idx) => (
+                  <div key={idx} className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2 hover:border-indigo-500 transition-all cursor-pointer">
+                    <span className="text-[10px] uppercase tracking-widest font-extrabold text-indigo-400">Stage {idx + 1}</span>
+                    <h4 className="font-extrabold text-sm text-white">{item.step}</h4>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">{item.desc}</p>
+                    <div className="mt-2 pt-2 border-t border-slate-800/80 text-[10px] text-cyan-400">
+                      <span className="font-semibold text-slate-400">PM context:</span> {item.pmNote}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ROW 2: INTERACTIVE JOINS Venn Diagrams */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* INNER JOIN vs LEFT JOIN diagram */}
+              <div className="bg-slate-950 border border-slate-800 rounded-3xl p-6 shadow-lg space-y-4">
+                <div className="flex items-center space-x-2">
+                  <window.LucideDatabase className="h-5 w-5 text-indigo-400" />
+                  <h3 className="font-bold text-white text-base">Interactive Relational JOIN Venn Visuals</h3>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Hover or select join configurations to visualize matching intersections between Table A (Users) and Table B (Subscriptions).
+                </p>
+
+                {/* Venn SVG Diagram */}
+                <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center space-y-6">
+                  <div className="flex items-center space-x-[-40px]">
+                    <div className="w-36 h-36 rounded-full bg-indigo-500/25 border-2 border-indigo-500 flex items-center justify-center text-xs font-bold text-indigo-200">
+                      Table A (Users)
+                    </div>
+                    <div className="w-36 h-36 rounded-full bg-cyan-500/25 border-2 border-cyan-500 flex items-center justify-center text-xs font-bold text-cyan-200">
+                      Table B (Subscriptions)
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 w-full">
+                    <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+                      <p className="font-bold text-indigo-400 mb-1">INNER JOIN</p>
+                      <p className="text-[11px] text-slate-400">Only returns users who have an active subscription record. If no match exists, they are skipped.</p>
+                    </div>
+                    <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+                      <p className="font-bold text-cyan-400 mb-1">LEFT JOIN</p>
+                      <p className="text-[11px] text-slate-400">Returns all users regardless of subscription. If they are unsubscribed, their status shows NULL.</p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* PM Metric Blueprint Cookbook */}
+              <div className="bg-slate-950 border border-slate-800 rounded-3xl p-6 shadow-lg space-y-4">
+                <div className="flex items-center space-x-2">
+                  <window.LucideSparkles className="h-5 w-5 text-yellow-400" />
+                  <h3 className="font-bold text-white text-base">PM Metric Blueprint Formulas</h3>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Common SaaS metrics translated into ready-to-use, optimized SQL scripts.
+                </p>
+
+                <div className="space-y-3">
+                  {[
+                    { title: "Daily Active Users (DAU)", code: "SELECT COUNT(DISTINCT user_id) FROM events WHERE event_date = '2026-03-24';" },
+                    { title: "Annual Recurring Revenue (ARR)", code: "SELECT SUM(monthly_fee * 12) FROM subscriptions WHERE status = 'active';" },
+                    { title: "Feature Adoption Count", code: "SELECT feature_name, COUNT(DISTINCT user_id) FROM feature_usage GROUP BY feature_name;" },
+                    { title: "Subscriber List Profile", code: "SELECT u.name, s.status FROM users u JOIN subscriptions s ON u.id = s.user_id;" }
+                  ].map((blueprint, bIdx) => (
+                    <div key={bIdx} className="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5">
+                      <h4 className="font-bold text-xs text-white">{blueprint.title}</h4>
+                      <code className="text-[11px] font-mono text-cyan-300 bg-slate-950 p-2 rounded-lg border border-slate-800 block overflow-x-auto">
+                        {blueprint.code}
+                      </code>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        )}
+
+        {/* ==================== TAB 4: FLASHCARDS ==================== */}
+        {activeTab === 'flashcards' && (
+          <div className="max-w-2xl mx-auto space-y-6">
+            
+            <div className="text-center space-y-2">
+              <h3 className="text-2xl font-bold text-white flex items-center justify-center space-x-2">
+                <window.LucideBookOpen className="h-6 w-6 text-indigo-400" />
+                <span>Spaced Repetition Active Recall</span>
+              </h3>
+              <p className="text-xs text-slate-400">
+                Unlock all hints sequentially before accessing the correct query solution.
+              </p>
+            </div>
+
+            {/* Flashcard Component */}
+            <div 
+              className="min-h-[250px] bg-gradient-to-br from-slate-950 to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 hover:border-slate-700 shadow-2xl relative"
+            >
+              <div className="absolute right-4 top-4">
+                <span className="text-[9px] uppercase tracking-widest font-extrabold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full">
+                  Concept {currentCardIdx + 1} of {flashcards.length}
+                </span>
+              </div>
+
+              <div className="my-auto space-y-5">
+                <div className="text-center space-y-1">
+                  <p className="text-[10px] text-slate-500 uppercase tracking-widest font-extrabold">Active Recalling Question</p>
+                  <p className="text-sm sm:text-base font-bold text-slate-100">
+                    {currentCard.question}
+                  </p>
+                </div>
+
+                {/* Hints Output (Hidden or unlocked) */}
+                {hintStep > 0 && currentCard.hints && (
+                  <div className="space-y-2 pt-3 border-t border-slate-800/80">
+                    <p className="text-[10px] text-amber-400 uppercase tracking-widest font-bold">
+                      💡 Active Hints Unlocked ({hintStep} of {totalHints})
+                    </p>
+                    <div className="space-y-1.5">
+                      {currentCard.hints.slice(0, hintStep).map((hintText, hIdx) => (
+                        <p key={hIdx} className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800 text-xs text-slate-300 leading-relaxed">
+                          {hintText}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Answer Display (Only available after all hints are used) */}
+                {showAnswer && allHintsUsed && (
+                  <div className="pt-4 border-t border-slate-800/80 text-center animate-fadeIn space-y-1">
+                    <p className="text-[10px] text-emerald-400 uppercase tracking-widest font-bold">Correct Solution & Explanation</p>
+                    <p className="text-xs sm:text-sm text-slate-200 leading-relaxed bg-slate-900/50 p-3 rounded-xl border border-emerald-500/10">
+                      {currentCard.answer}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Progress and Hint Unlocking Navigation */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 justify-center items-center">
+                {!allHintsUsed ? (
+                  <button
+                    onClick={() => {
+                      setHintStep(prev => Math.min(prev + 1, totalHints));
+                    }}
+                    className="w-full sm:w-auto bg-amber-600/10 hover:bg-amber-600/25 text-amber-400 border border-amber-500/20 text-xs font-bold py-2 px-4 rounded-xl transition flex items-center justify-center space-x-1.5"
+                  >
+                    <window.LucideHelpCircle className="h-4 w-4" />
+                    <span>Unlock Next Hint ({hintStep}/{totalHints})</span>
+                  </button>
+                ) : (
+                  !showAnswer && (
+                    <button
+                      onClick={() => setShowAnswer(true)}
+                      className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2 px-5 rounded-xl shadow-lg shadow-emerald-600/15 transition flex items-center justify-center space-x-1.5"
+                    >
+                      <window.LucideSparkles className="h-4 w-4 animate-pulse" />
+                      <span>Reveal Verified Answer</span>
+                    </button>
+                  )
+                )}
+              </div>
+            </div>
+
+            {/* Rating Controls (Active Spaced Repetition) */}
+            {showAnswer && (
+              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 text-xs animate-fadeIn">
+                <span className="text-slate-400 font-medium">Rate memory difficulty for current card:</span>
+                <div className="flex space-x-2 w-full sm:w-auto">
+                  <button 
+                    onClick={() => handleRateFlashcard('easy')}
+                    className="flex-1 sm:flex-none bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-600/20 px-4 py-2 rounded-xl font-bold transition text-center"
+                  >
+                    🟢 Easy
+                  </button>
+                  <button 
+                    onClick={() => handleRateFlashcard('medium')}
+                    className="flex-1 sm:flex-none bg-amber-600/10 text-amber-400 border border-amber-500/20 hover:bg-amber-600/20 px-4 py-2 rounded-xl font-bold transition text-center"
+                  >
+                    🟡 Medium
+                  </button>
+                  <button 
+                    onClick={() => handleRateFlashcard('hard')}
+                    className="flex-1 sm:flex-none bg-rose-600/10 text-rose-400 border border-rose-500/20 hover:bg-rose-600/20 px-4 py-2 rounded-xl font-bold transition text-center"
+                  >
+                    🔴 Hard
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Skip Card */}
+            <div className="flex justify-end">
+              <button 
+                onClick={() => {
+                  setHintStep(0);
+                  setShowAnswer(false);
+                  setCurrentCardIdx((prev) => (prev + 1) % flashcards.length);
+                }}
+                className="text-xs text-slate-500 hover:text-slate-300 font-medium flex items-center space-x-1"
+              >
+                <span>Skip Card / Next</span>
+                <window.LucideChevronRight className="h-3 w-3" />
+              </button>
+            </div>
+
+          </div>
+        )}
+
+      </main>
+
+      {/* FOOTER */}
+      <footer className="mt-auto border-t border-slate-800 bg-slate-950 py-4 px-6 text-center text-xs text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-2">
+        <p>© 2026 SQL PM Mastery. Built exclusively for technical and product alignment.</p>
+        <p className="flex items-center space-x-1">
+          <window.LucideDatabase className="h-3 w-3 text-cyan-400" />
+          <span>Local client-side execution sandbox mode active.</span>
+        </p>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));</script></body></html>
